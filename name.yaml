@@ -45,7 +45,6 @@ metadata:
 data:
   ELASTICSEARCH_HOST: quickstart-es-http
   REDIS_HOST: redis-service
-  SCHEMA: smfood.json
 ---
 
 kind: PersistentVolume
@@ -138,7 +137,7 @@ spec:
         - name: CHECKPOINT_PATH
           value: "/schema/check-point"
         - name: SCHEMA
-          value: "cpg.json"
+          value: "restaurants.json"
         - name: ME_CONFIG_PGSYNC_SERVICE
           valueFrom:
             configMapKeyRef:
