@@ -139,7 +139,7 @@ spec:
         - name: SCRIPT
           value: "bootstrap-pgsync"
         - name: SCHEMA
-          value: "smfood.json"
+          value: "cpg.json"
         - name: ME_CONFIG_PGSYNC_SERVICE
           valueFrom:
             configMapKeyRef:
