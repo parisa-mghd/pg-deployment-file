@@ -21,23 +21,6 @@ spec:
         ports:
         - containerPort: 6379
 ---
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis-service
-  namespace: elk-nudge
-spec:
-  selector:
-    app: redis
-  type: ClusterIP
-  ports:
-    - protocol: TCP
-      port: 6379
-      targetPort: 6379
-
----
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -77,12 +60,12 @@ spec:
   capacity:
     storage: 100Mi
   accessModes:
-    - ReadWriteOnce
+  - ReadOnlyMany
+  - ReadWriteOnce
   hostPath:
     path: "/var/local/schema"
 
 ---
-
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -92,6 +75,7 @@ metadata:
 spec:
   storageClassName: generic
   accessModes:
+  - ReadOnlyMany
   - ReadWriteOnce
   resources:
     requests:
@@ -126,7 +110,7 @@ spec:
         image: docker.io/behnood/v22-pg-elk
         command: ["./runserver.sh"]
         volumeMounts:
-        - mountPath: /schema/
+        - mountPath: /schema
           name: pg-data
         ports:
         - containerPort: 27017
@@ -152,11 +136,9 @@ spec:
         - name: REDIS_PORT
           value: "6379"
         - name: CHECKPOINT_PATH
-          value: "/schema/"
-        - name: SCRIPT
-          value: "bootstrap-pgsync"
+          value: "/schema/check-point"
         - name: SCHEMA
-          value: "restaurants.json"
+          value: "smfood.json"
         - name: ME_CONFIG_PGSYNC_SERVICE
           valueFrom:
             configMapKeyRef:
@@ -167,6 +149,7 @@ spec:
             configMapKeyRef:
               name: pgsync-configmap
               key: REDIS_HOST
+
 ---
 
 apiVersion: v1
@@ -182,4 +165,3 @@ spec:
     - protocol: TCP
       port: 27017
       targetPort: 27017
-        
